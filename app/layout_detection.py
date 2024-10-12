@@ -4,10 +4,6 @@ import io
 from PIL import Image
 
 def detect_layout(image_bytes: bytes) -> dict:
-    """
-    Detect basic layout elements like text blocks, tables, and images.
-    Returns a dictionary with detected elements and their positions.
-    """
     try:
         image = Image.open(io.BytesIO(image_bytes)).convert("RGB")
         open_cv_image = np.array(image)
@@ -16,7 +12,6 @@ def detect_layout(image_bytes: bytes) -> dict:
 
         gray = cv2.cvtColor(image_cv, cv2.COLOR_BGR2GRAY)
         _, thresh = cv2.threshold(gray, 150, 255, cv2.THRESH_BINARY_INV)
-
 
         contours, _ = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
