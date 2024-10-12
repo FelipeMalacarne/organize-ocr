@@ -1,6 +1,5 @@
 FROM python:3.11-slim
 
-# Install system dependencies
 RUN apt-get update && apt-get install -y \
     tesseract-ocr \
     libtesseract-dev \
@@ -9,39 +8,28 @@ RUN apt-get update && apt-get install -y \
     libglib2.0-0 \
     && rm -rf /var/lib/apt/lists/*
 
-# Set environment variables
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
-# Set work directory
 WORKDIR /app
 
-# Install Python dependencies
 COPY requirements.txt .
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
-# Debugging: Print Python version and installed packages
 RUN python --version
 RUN pip list
 
-# Copy application code
 COPY app/ app/
 
-# Copy Google Cloud credentials
 COPY credentials.json /app/credentials.json
 
-# Set Google Cloud credentials environment variable
 ENV GOOGLE_APPLICATION_CREDENTIALS="/app/credentials.json"
 
-# Debugging: Print contents of /app directory
 RUN ls -la /app
 
-# Expose port
 EXPOSE 8080
 
-# Install uvicorn for development
 RUN pip install uvicorn
 
-# Command to run the application with auto-reload
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8080", "--reload"]
